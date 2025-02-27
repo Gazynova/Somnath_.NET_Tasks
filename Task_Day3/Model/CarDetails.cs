@@ -54,7 +54,7 @@ namespace Task_Day3.Model
 
         public void getDetails()
         {
-            Console.WriteLine("Receiving Car Info:");
+            Console.WriteLine("Receiving Car Information:");
 
 
         }
