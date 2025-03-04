@@ -1,0 +1,244 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "default": {
+      "type": "object",
+      "properties": {
+        "taskName": {
+          "type": "string",
+          "description": "Specifies the task label used in the user interface (Deprecated: Use taskLabel property instead)."
+        },
+        "taskLabel": {
+          "type": "string",
+          "description": "Specifies the task label used in the user interface."
+        },
+        "appliesTo": {
+          "type": "string",
+          "description": "Specifies which files the command can be performed on. The use of wildcards is supported.\ne.g., '*', '*.cpp', '/*.txt'"
+        },
+        "contextType": {
+          "type": "string",
+          "enum": [
+            "custom",
+            "build",
+            "clean",
+            "rebuild"
+          ],
+          "description": "Specified the build target invoked when running the task. The default value for this parameter is \"custom\"",
+          "default": "custom"
+        },
+        "output": {
+          "type": "string",
+          "description": "Specifies an output tag to your task."
+        },
+        "inheritEnvironments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specifies a set of environment variables inherited from multiple sources.\ne.g., You can define some variables in files like CMakeSettings.json or CppProperties.json and make them available to the task context."
+        },
+        "passEnvVars": {
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether or not to include additional environment variables to the task context. These variables are different from the ones defined using the 'envVars' property."
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The other tasks this task depend on."
+        },
+        "dependsOrder": {
+          "type": "string",
+          "enum": [
+            "parallel",
+            "sequence"
+          ],
+          "description": "Determines the order of the dependsOn tasks for this task. Note that this property is not recursive.",
+          "required": [
+            "dependsOn"
+          ]
+        }
+      },
+      "required": [
+        "taskLabel",
+        "appliesTo"
+      ]
+    },
+    "defaultTask": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "default"
+              ]
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/default"
+        }
+      ],
+      "required": [
+        "type"
+      ]
+    },
+    "launch": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "launch"
+          ]
+        },
+        "command": {
+          "type": "string",
+          "description": "Specifies the full path of the process or script to launch."
+        },
+        "args": {
+          "type": "array",
+          "description": "Specifies the arguments passed to the command."
+        },
+        "launchOption": {
+          "type": "string",
+          "enum": [
+            "None",
+            "ContinueOnError",
+            "IgnoreError"
+          ],
+          "description": "Specifies how to proceed with the command invoke when there are errors."
+        },
+        "workingDirectory": {
+          "type": "string",
+          "description": "Specifies the directory in which the command will run.",
+          "default": "The project's current working directory."
+        },
+        "customLaunchCommand": {
+          "type": "string",
+          "description": "Specifies a global scope customization to apply before executing the command. Useful for setting environment variables like %PATH%"
+        },
+        "customLaunchCommandArgs": {
+          "type": "string",
+          "description": "Specifies arguments to customLaunchCommand."
+        },
+        "env": {
+          "type": "object",
+          "description": "Specifies a key-value list of custom environment variables.\ne.g. \"myEnv\":\"myVal\""
+        },
+        "envVars": {
+          "type": "object",
+          "description": "(DEPRECATED) Use the 'env' property instead\nSpecifies a key-value list of custom environment variables.\ne.g. \"myEnv\":\"myVal\""
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/launch"
+              }
+            ]
+          },
+          "description": "Specifies a list of commands to invoke in order."
+        }
+      },
+      "dependencies": {
+        "customLaunchCommandArgs": [
+          "customLaunchCommand"
+        ]
+      }
+    },
+    "launchTask": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/default"
+        },
+        {
+          "$ref": "#/definitions/launch"
+        }
+      ]
+    },
+    "msbuild": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "msbuild"
+          ]
+        },
+        "verbosity": {
+          "type": "string",
+          "enum": [
+            "Quiet",
+            "Minimal",
+            "Normal",
+            "Detailed",
+            "Diagnostic"
+          ],
+          "description": "Specifies the MSBuild project build output verbosity"
+        },
+        "toolsVersion": {
+          "type": "string",
+          "description": "Specifies thet Toolset version to build the project.\ne.g. '2.0', '3.5', '4.0', 'Current'",
+          "default": "Current"
+        },
+        "globalProperties": {
+          "type": "object",
+          "description": "Specifies a key-value list of the global properties to pass into the project.\ne.g. \"Configuration\": \"Release\""
+        },
+        "properties": {
+          "type": "object",
+          "description": "Specifies a key-value list of additional project only properties."
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specifies the list of targets to invoke, in order, on the project. The project's default target is used if none are specified."
+        }
+      }
+    },
+    "msbuildTask": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/default"
+        },
+        {
+          "$ref": "#/definitions/msbuild"
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "variables": {
+      "type": "object"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/defaultTask"
+          },
+          {
+            "$ref": "#/definitions/launchTask"
+          },
+          {
+            "$ref": "#/definitions/msbuildTask"
+          }
+        ]
+      }
+    }
+  }
+}
