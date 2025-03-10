@@ -36,7 +36,7 @@ namespace Hackathon_SQL
                         Console.WriteLine("Enter PolicyType:");
                         int policyType = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Enter StartDate (YYYY-MM-DD):");
-                        DateTime startDate = Convert.ToDateTime(Console.ReadLine());
+                        DateTime startDate = DateTime.Now;
                         Console.WriteLine("Enter EndDate (YYYY-MM-DD):");
                         DateTime endDate = Convert.ToDateTime(Console.ReadLine());
 
