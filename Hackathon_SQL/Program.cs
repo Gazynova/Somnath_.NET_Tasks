@@ -64,12 +64,14 @@ namespace Hackathon_SQL
                         insured.DeleteInsured(removePolicyID);
                         break;
 
-                    //case 4:
-                    //    Console.WriteLine("Enter PolicyID to search:");
-                    //    int searchPolicyID = Convert.ToInt32(Console.ReadLine());
-                    //    PolicySql searchedPolicy = insured.GetInsuredByID(searchPolicyID);
-                    //    Console.WriteLine(searchedPolicy != null ? searchedPolicy.ToString() : "Insured not found.");
-                    //    break;
+                    case 4:
+                        Console.WriteLine("Enter PolicyID to search:");
+                        int searchPolicyID = Convert.ToInt32(Console.ReadLine());
+                        bool status = insured.CheckAvailable(searchPolicyID);
+                        Console.WriteLine(status != false ? status.ToString() : "Insured not found.");
+                        Console.WriteLine(status != false ? status.ToString() : "Insured not found.");
+
+                        break;
 
                     case 5:
                         List<PolicySql> policies = insured.GetInsured();
@@ -79,13 +81,16 @@ namespace Hackathon_SQL
                         }
                         break;
 
-                    //case 6:
-                    //    List<PolicySql> activePolicies = insured.GetActivePolicies();
-                    //    foreach (PolicySql item in activePolicies)
-                    //    {
-                    //        Console.WriteLine(item);
-                    //    }
-                    //    break;
+                    case 6:
+                        List<PolicySql> activePolicies = insured.GetInsured();
+                        foreach (PolicySql item in activePolicies)
+                        {
+                            if (item.StartDate < item.EndDate)
+                            {
+                                Console.WriteLine(item);
+                            }
+                        }
+                        break;
 
                     case 7:
                         Console.WriteLine("Exiting...");

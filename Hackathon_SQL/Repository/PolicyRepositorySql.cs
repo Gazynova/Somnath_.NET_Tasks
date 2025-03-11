@@ -27,6 +27,21 @@ namespace Hackathon_SQL.Repository
             connstring = DbConnUtil.GetConnectionString();
         }
 
+        public bool CheckAvailable(int id)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connstring))
+            using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Insured WHERE PolicyID = @PolicyID", sqlConnection))
+            {
+                cmd.Parameters.AddWithValue("@PolicyID", id);
+                sqlConnection.Open();
+
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
+        
+
 
 
         public List<PolicySql> GetInsured()
@@ -58,6 +73,7 @@ namespace Hackathon_SQL.Repository
 
         public int AddInsured(PolicySql policy)
         {
+            
             using (SqlConnection sqlConnection = new SqlConnection(connstring))
             {
                 // cmd.Parameters.Clear();
@@ -78,14 +94,17 @@ namespace Hackathon_SQL.Repository
 
         public int DeleteInsured(int id)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(connstring))
-            {
-                cmd.CommandText = "Delete from Insured where PolicyID=@PolicyID";
-                cmd.Parameters.AddWithValue("@PolicyID", id);
-                cmd.Connection = sqlConnection;
-                sqlConnection.Open();
-                return cmd.ExecuteNonQuery();
-            }
+
+                using (SqlConnection sqlConnection = new SqlConnection(connstring))
+                {
+                    cmd.CommandText = "Delete from Insured where PolicyID=@PolicyID";
+                    cmd.Parameters.AddWithValue("@PolicyID", id);
+                    cmd.Connection = sqlConnection;
+                    sqlConnection.Open();
+                    return cmd.ExecuteNonQuery();
+                }
+           
+                
         }
 
         public int UpdateInsured(int id)

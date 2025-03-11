@@ -14,6 +14,7 @@ namespace Hackathon_SQL.Interface
 
         public int DeleteInsured(int id);
         public int UpdateInsured(int id);
+        public bool CheckAvailable(int id);
 
 
     }
