@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<ul>
+    @* @Url.Action("Action", "Controller") *@
+    <li><a href="@Url.Action("ManageUsers", "Admin")">Manage Users</a></li>
+    <li><a href="@Url.Action("ManageCourses", "Course")">Manage Courses</a></li>
+    <li><a href="@Url.Action("ViewReports", "Report")">View Reports</a></li>
+
+</ul>

@@ -1,0 +1,29 @@
+﻿@model Project_Demo.Models.EnrollmentViewModel
+
+<h2>Enroll in a Course</h2>
+
+<form method="post">
+    <div>
+        <label for="StudentId">Select Student</label>
+        <select asp-for="StudentId" class="form-control">
+            <option value="">-- Select Student --</option>
+            @foreach (var student in Model.Students)
+            {
+                <option value="@student.Id">@student.FirstName+@student.LastName</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label for="CourseId">Select Course</label>
+        <select asp-for="CourseId" class="form-control">
+            <option value="">-- Select Course --</option>
+            @foreach (var course in Model.Courses)
+            {
+                <option value="@course.Id">@course.CourseName</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enroll</button>
+</form>

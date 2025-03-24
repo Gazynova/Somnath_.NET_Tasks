@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<ul>
+    <li><a href="@Url.Action("GenerateReport", "Report")">View Report</a></li>
+    <li><a href="@Url.Action("Enroll", "Enrollment")">Enroll in Course</a></li>
+    <li><a href="@Url.Action("Withdraw", "Enrollment")">Withdraw from Course</a></li>
+</ul>

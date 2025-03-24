@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Teacher Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<ul>
+    <!-- Link to create courses, restricted to Teachers -->
+    <li><a href="@Url.Action("Create", "Course")">Manage Courses</a></li>
+
+    <!-- Link to generate reports, assuming this is a report generation feature -->
+    <li><a href="@Url.Action("GenerateReport", "Report")">Generate Report</a></li>
+
+    <!-- Link to see all courses -->
+    <li><a href="@Url.Action("Index", "Course")">See All Courses</a></li>
+
+    <!-- Link to see all students -->
+    <li><a href="@Url.Action("Index", "Student")">See All Students</a></li>
+
+    <!-- Link to modify an existing course, restricted to Teachers -->
+    <li><a href="@Url.Action("Edit", "Course")">Modify Course</a></li>
+
+    <!-- Link to delete or update a course, restricted to Teachers -->
+    <li><a href="@Url.Action("Delete", "Course")">Delete/Update Course</a></li>
+
+    <!-- Link to withdraw a student from a course (assuming this is part of the Enrollment functionality) -->
+    <li><a href="@Url.Action("Withdraw", "Enrollment")">Withdraw Student from Course</a></li>
+</ul>
