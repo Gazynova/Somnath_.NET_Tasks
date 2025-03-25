@@ -1,4 +1,5 @@
-﻿namespace Project_Demo.Models
+﻿
+namespace Project_Demo.Models
 {
     public class Enrollment
     {
@@ -8,5 +9,7 @@
         public int CourseId { get; set; }
         public Course Course { get; set; }
         public string Grade { get; set; }
+
+        
     }
 }

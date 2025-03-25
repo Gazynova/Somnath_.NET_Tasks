@@ -24,14 +24,14 @@ namespace Project_Demo.Repositories
                 throw new ValidationException("Invalid student or course ID provided.");
             }
 
-            var studentExists = await _context.Students.AnyAsync(s => s.Id == studentId);
-            var courseExists = await _context.Courses.AnyAsync(c => c.Id == courseId);
+            var student = await _context.Students.FindAsync(studentId);
+            var course = await _context.Courses.FindAsync(courseId);
 
-            if (!studentExists)
+            if (student == null)
             {
                 throw new NotFoundException($"Student with ID {studentId} not found.");
             }
-            if (!courseExists)
+            if (course == null)
             {
                 throw new NotFoundException($"Course with ID {courseId} not found.");
             }
@@ -85,11 +85,6 @@ namespace Project_Demo.Repositories
                 .Include(e => e.Course)
                 .ToListAsync();
 
-            if (!enrollments.Any())
-            {
-                throw new NotFoundException($"No enrollments found for student ID {studentId}.");
-            }
-
             return enrollments;
         }
 
@@ -104,11 +99,6 @@ namespace Project_Demo.Repositories
                 .Where(e => e.CourseId == courseId)
                 .Include(e => e.Student)
                 .ToListAsync();
-
-            if (!enrollments.Any())
-            {
-                throw new NotFoundException($"No enrollments found for course ID {courseId}.");
-            }
 
             return enrollments;
         }

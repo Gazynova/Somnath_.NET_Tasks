@@ -34,10 +34,6 @@ namespace Project_Demo
             builder.Services.AddScoped<IStudentService, StudentService>();
             builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
-
-            // Optionally, add email service
-            // builder.Services.AddScoped<IEmailSender, EmailSender>();
-
             // Configure authorization policies (role-based authorization)
             builder.Services.AddAuthorization(options =>
             {
@@ -45,7 +41,9 @@ namespace Project_Demo
                 options.AddPolicy("TeacherOnly", policy => policy.RequireRole("Teacher"));
                 options.AddPolicy("StudentOnly", policy => policy.RequireRole("Student"));
             });
+
             var app = builder.Build();
+
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -62,11 +60,17 @@ namespace Project_Demo
                     }
                 }
 
-                // Optionally, you can also create a default admin user if it doesn't exist
+                // Optionally, create a default admin user if it doesn't exist
                 var adminUser = await userManager.FindByEmailAsync("admin@domain.com");
                 if (adminUser == null)
                 {
-                    var newUser = new ApplicationUser { UserName = "admin@domain.com", Email = "admin@domain.com" };
+                    var newUser = new ApplicationUser
+                    {
+                        UserName = "admin123",
+                        Email = "admin@domain.com",
+                        //DateOfBirth = new DateTime(1990, 1, 1) // Default DOB
+                    };
+
                     var result = await userManager.CreateAsync(newUser, "Admin@123");
                     if (result.Succeeded)
                     {
@@ -74,7 +78,7 @@ namespace Project_Demo
                     }
                 }
             }
-            
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {

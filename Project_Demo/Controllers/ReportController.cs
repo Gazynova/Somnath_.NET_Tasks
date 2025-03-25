@@ -16,41 +16,51 @@ namespace Project_Demo.Controllers
         }
 
         // GET: Report/GenerateReport
-        public async Task<IActionResult> GenerateReport(int studentId)
+        public async Task<IActionResult> GenerateReport(string studentId)
         {
-            // Retrieve the report data for the student
-            var reportData = await _reportService.GenerateStudentReportAsync(studentId);
-
-            if (reportData == null)
+            try
             {
-                return NotFound();  // If no report data is found, return a 404
-            }
+                // Retrieve the report data for the student
+                var reportData = await _reportService.GenerateStudentReportAsync(studentId);
 
-            // Get the current logged-in user's email
-            var currentUserEmail = User.Identity.Name;
-
-            // Check if the user is authorized to view this report
-            if (User.IsInRole("Admin") || User.IsInRole("Teacher") || currentUserEmail == reportData.StudentEmail)
-            {
-                // Map the service data to the ReportViewModel
-                var viewModel = new ReportViewModel
+                if (reportData == null)
                 {
-                    StudentName = reportData.StudentName,
-                    StudentEmail = reportData.StudentEmail,
-                    DateOfBirth = reportData.DateOfBirth,
-                    EnrolledCourses = reportData.EnrolledCourses.Select(c => new CourseReport
+                    return NotFound("No report found for the specified student.");
+                }
+
+                // Get the current logged-in user's email
+                var currentUserEmail = User.Identity?.Name;
+
+                // Check if the user is authorized to view this report
+                if (User.IsInRole("Admin") || User.IsInRole("Teacher") || currentUserEmail == reportData.StudentEmail)
+                {
+                    // Map the service data to the ReportViewModel
+                    var viewModel = new ReportViewModel
                     {
-                        CourseName = c.CourseName,
-                        CourseDescription = c.CourseDescription,
-                        Grade = c.Grade
-                    }).ToList()
-                };
+                        StudentName = reportData.StudentName,
+                        StudentEmail = reportData.StudentEmail,
+                        DateOfBirth = reportData.DateOfBirth,
+                        EnrolledCourses = reportData.EnrolledCourses.Select(c => new CourseReport
+                        {
+                            CourseName = c.CourseName,
+                            CourseDescription = c.CourseDescription,
+                            Grade = c.Grade
+                        }).ToList()
+                    };
 
-                return View(viewModel);  // Return the report view with the mapped model
+                    return View(viewModel);  // Return the report view with the mapped model
+                }
+
+                // If the user is not authorized, return a 403 Forbidden status
+                return Forbid();
             }
+            catch (Exception ex)
+            {
+                // Log the error if logging is set up (optional)
+                // _logger.LogError(ex, "Error generating student report");
 
-            // If the user is not authorized, return a 403 Forbidden status
-            return Forbid();
+                return StatusCode(500, "An error occurred while generating the report. Please try again later.");
+            }
         }
     }
 }

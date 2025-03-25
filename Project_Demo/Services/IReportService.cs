@@ -4,7 +4,7 @@ namespace Project_Demo.Services
 {
     public interface IReportService
     {
-        Task<ReportViewModel> GenerateStudentReportAsync(int studentId);
+        Task<ReportViewModel> GenerateStudentReportAsync(string studentId);
 
     }
 }

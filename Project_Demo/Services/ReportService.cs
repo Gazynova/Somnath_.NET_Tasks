@@ -15,15 +15,15 @@ public class ReportService : IReportService
         _context = context;
     }
 
-    public async Task<ReportViewModel> GenerateStudentReportAsync(int studentId)
+    public async Task<ReportViewModel> GenerateStudentReportAsync(string studentId)
     {
-        if (studentId <= 0)
-        {
-            throw new ValidationException("Invalid student ID provided.");
-        }
+        //if (studentId <= 0)
+        //{
+        //    throw new ValidationException("Invalid student ID provided.");
+        //}
 
         var studentReport = await _context.Students
-            .Where(s => s.Id == studentId)
+            .Where(s => s.ApplicationUserId == studentId)
             .Select(s => new ReportViewModel
             {
                 StudentName = s.FirstName + " " + s.LastName,

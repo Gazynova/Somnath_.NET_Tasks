@@ -1,4 +1,5 @@
-﻿using Project_Demo.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using Project_Demo.Exceptions;
 using Project_Demo.Models;
 using Project_Demo.Repositories;
 using System.Collections.Generic;
@@ -28,18 +29,35 @@ namespace Project_Demo.Services
             return students;
         }
 
-        public async Task<Student> GetStudentByIdAsync(int id)
+        public async Task<Student> GetStudentByIdAsync(string id)
         {
-            if (id <= 0)
-            {
-                throw new ValidationException("Invalid student ID provided.");
-            }
+            //if (id <= 0)
+            //{
+            //    throw new ValidationException("Invalid student ID provided.");
+            //}
 
-            var student = await _studentRepository.GetStudentByIdAsync(id);
+            var student = await _studentRepository.GetStudentByUserIdAsync(id);
 
             if (student == null)
             {
                 throw new NotFoundException($"No student found with ID {id}.");
+            }
+
+            return student;
+        }
+
+        public async Task<Student> GetStudentByUserIdAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ValidationException("User ID cannot be null or empty.");
+            }
+
+            var student = await _studentRepository.GetStudentByUserIdAsync(userId);
+
+            if (student == null)
+            {
+                throw new NotFoundException($"No student found with User ID {userId}.");
             }
 
             return student;
@@ -72,7 +90,7 @@ namespace Project_Demo.Services
                 throw new ValidationException("Student must have a first and last name.");
             }
 
-            var existingStudent = await _studentRepository.GetStudentByIdAsync(student.Id);
+            var existingStudent = await _studentRepository.GetStudentByUserIdAsync(student.ApplicationUserId);
             if (existingStudent == null)
             {
                 throw new NotFoundException($"Cannot update. Student with ID {student.Id} does not exist.");
@@ -81,20 +99,20 @@ namespace Project_Demo.Services
             await _studentRepository.UpdateStudentAsync(student);
         }
 
-        public async Task DeleteStudentAsync(int id)
+        public async Task DeleteStudentAsync(string applicationUserId)
         {
-            if (id <= 0)
-            {
-                throw new ValidationException("Invalid student ID provided.");
-            }
+            //if (id <= 0)
+            //{
+            //    throw new ValidationException("Invalid student ID provided.");
+            //}
 
-            var student = await _studentRepository.GetStudentByIdAsync(id);
+            var student = await _studentRepository.GetStudentByUserIdAsync(applicationUserId);
             if (student == null)
             {
-                throw new NotFoundException($"Cannot delete. Student with ID {id} does not exist.");
+                throw new NotFoundException($"Cannot delete. Student with ID {applicationUserId} does not exist.");
             }
 
-            await _studentRepository.DeleteStudentAsync(id);
+            await _studentRepository.DeleteStudentAsync(applicationUserId);
         }
     }
 }

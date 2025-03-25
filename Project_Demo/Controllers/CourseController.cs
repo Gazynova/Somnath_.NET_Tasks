@@ -2,13 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Project_Demo.Models;
 using Project_Demo.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace Project_Demo.Controllers
 {
-
+    [Authorize] // Ensure only authenticated users can access this controller
     public class CourseController : Controller
     {
-        readonly ICourseService _courseService;
+        private readonly ICourseService _courseService;
 
         public CourseController(ICourseService courseService)
         {
@@ -16,102 +18,142 @@ namespace Project_Demo.Controllers
         }
 
         [Authorize(Roles = "Student, Teacher")]
-        // GET: Course
         public async Task<IActionResult> Index()
         {
-            var courses = await _courseService.GetAllCoursesAsync();
-            return View(courses);
+            try
+            {
+                var courses = await _courseService.GetAllCoursesAsync();
+                return View(courses);
+            }
+            catch (Exception ex)
+            {
+                // Log error (optional)
+                // _logger.LogError(ex, "Error retrieving courses");
+                return StatusCode(500, "An error occurred while fetching courses.");
+            }
         }
 
         [Authorize(Roles = "Student, Teacher")]
-        // GET: Course/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var course = await _courseService.GetCourseByIdAsync(id);
-            if (course == null)
+            try
             {
-                return NotFound();
+                var course = await _courseService.GetCourseByIdAsync(id);
+                if (course == null)
+                {
+                    return NotFound("Course not found.");
+                }
+                return View(course);
             }
-            return View(course);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while retrieving course details.");
+            }
         }
 
-        // GET: Course/Create
-        [Authorize(Roles = "Student, Teacher")]
-
+        [Authorize(Roles = "Teacher")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Course/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
-
         public async Task<IActionResult> Create([Bind("CourseName,Description,Credits")] Course course)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                return View(course);
+            }
+
+            try
             {
                 await _courseService.AddCourseAsync(course);
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while creating the course.");
+            }
         }
 
-        // GET: Course/Edit/5
         [Authorize(Roles = "Teacher")]
-
         public async Task<IActionResult> Edit(int id)
         {
-            var course = await _courseService.GetCourseByIdAsync(id);
-            if (course == null)
+            try
             {
-                return NotFound();
+                var course = await _courseService.GetCourseByIdAsync(id);
+                if (course == null)
+                {
+                    return NotFound("Course not found.");
+                }
+                return View(course);
             }
-            return View(course);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while retrieving course details.");
+            }
         }
 
-        // POST: Course/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
-
         public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,Description,Credits")] Course course)
         {
             if (id != course.Id)
             {
-                return NotFound();
+                return BadRequest("Course ID mismatch.");
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                return View(course);
+            }
+
+            try
             {
                 await _courseService.UpdateCourseAsync(course);
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the course.");
+            }
         }
 
-        // GET: Course/Delete/5
         [Authorize(Roles = "Teacher")]
-
         public async Task<IActionResult> Delete(int id)
         {
-            var course = await _courseService.GetCourseByIdAsync(id);
-            if (course == null)
+            try
             {
-                return NotFound();
+                var course = await _courseService.GetCourseByIdAsync(id);
+                if (course == null)
+                {
+                    return NotFound("Course not found.");
+                }
+                return View(course);
             }
-            return View(course);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while retrieving course details.");
+            }
         }
 
-        // POST: Course/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _courseService.DeleteCourseAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _courseService.DeleteCourseAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the course.");
+            }
         }
     }
 }

@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AspNetCoreGeneratedDocument;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Project_Demo.Models;
 using Project_Demo.Models.ViewModels;
+using Project_Demo.Services;
+using System.Threading.Tasks;
 
 namespace Project_Demo.Controllers
 {
@@ -11,15 +14,17 @@ namespace Project_Demo.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-
+        private readonly IStudentService _studentService;
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IStudentService studentService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _studentService = studentService;
         }
 
         // GET: /Account/Login
@@ -31,37 +36,47 @@ namespace Project_Demo.Controllers
         // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
-
             if (!ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-                if (result.Succeeded)
-                {
-                    var user = await _userManager.FindByEmailAsync(model.Email);
-                    var roles = await _userManager.GetRolesAsync(user);
+                return View(model);
+            }
 
-                    if (roles.Contains("Admin"))
-                    {
-                        return RedirectToAction("Admin", "Dashboard");
-                    }
-                    else if (roles.Contains("Teacher"))
-                    {
-                        return RedirectToAction("Teacher", "Dashboard");
-                    }
-                    else if (roles.Contains("Student"))
-                    {
-                        return RedirectToAction("Student", "Dashboard");
-                    }
-                    return RedirectToLocal(returnUrl);
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
-                }
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return View(model);
+            }
+
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                ModelState.AddModelError(string.Empty, "You must confirm your email before logging in.");
+                return View(model);
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, true);
+
+            if (result.Succeeded)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                if (roles.Contains("Admin"))
+                    return RedirectToAction("Admin", "Dashboard");
+                if (roles.Contains("Teacher"))
+                    return RedirectToAction("Teacher", "Dashboard");
+                if (roles.Contains("Student"))
+                    return RedirectToAction("Student", "Dashboard");
+
+                return RedirectToLocal("/");
+            }
+            else if (result.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "Your account has been locked due to multiple failed attempts. Try again later.");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
 
             return View(model);
@@ -78,39 +93,54 @@ namespace Project_Demo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser()
+                {
+                    UserName = model.FirstName + model.LastName,
+                    Email = model.Email,
+                    EmailConfirmed = true,
+                    //NormalizedEmail = model.Email,
+
+                    //FirstName = model.FirstName,
+                    //LastName = model.LastName,
+                    //DateOfBirth = model.DateOfBirth
+                };
+
+
+                //var student = new Student()
+                //{
+                //    FirstName = model.FirstName,
+                //    LastName = model.LastName,
+                //    DateOfBirth = model.DateOfBirth,
+                //    Email = model.Email,
+                //    ApplicationUserId = user.Id,
+
+                //};
+
+
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    // Assign the role based on the user role selected during registration
-                    if (model.Role == "Admin")
-                    {
-                        await _userManager.AddToRoleAsync(user, "Admin");
-                        return RedirectToAction("Admin", "Dashboard");
-                    }
-                    else if (model.Role == "Teacher")
-                    {
-                        await _userManager.AddToRoleAsync(user, "Teacher");
-                        return RedirectToAction("Teacher", "Dashboard");
-                    }
-                    else
-                    {
-                        await _userManager.AddToRoleAsync(user, "Student");
-                        return RedirectToAction("Student", "Dashboard");
-                    }
+                    // Assign the selected role
+                    await _userManager.AddToRoleAsync(user, model.Role);
+                    //if(model.Role == "Student")
+                    //{
+                    //    await _studentService.AddStudentAsync(student);
+                    //}
+
+                    //await _studentRepository.Create(student);
+                    return RedirectToAction($"{model.Role}", "Dashboard");
+                     
                 }
                 else
                 {
-                    // Add more debugging information to understand why login failed
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Registration failed.");
                     foreach (var error in result.Errors)
                     {
-                        ModelState.AddModelError(string.Empty, error.Description); // This will give you more error info
+                        ModelState.AddModelError(string.Empty, error.Description);
                     }
-                    return View(model);
                 }
             }
 

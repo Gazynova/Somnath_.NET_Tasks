@@ -2,6 +2,7 @@
 using Project_Demo.Models;
 using Project_Demo.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Project_Demo.Services
@@ -44,7 +45,7 @@ namespace Project_Demo.Services
 
             var enrollments = await _enrollmentRepository.GetEnrollmentsByStudentIdAsync(studentId);
 
-            if (enrollments == null || !enrollments.Any())
+            if (!enrollments.Any())
             {
                 throw new NotFoundException($"No enrollments found for student ID {studentId}.");
             }
@@ -61,7 +62,7 @@ namespace Project_Demo.Services
 
             var enrollments = await _enrollmentRepository.GetEnrollmentsByCourseIdAsync(courseId);
 
-            if (enrollments == null || !enrollments.Any())
+            if (!enrollments.Any())
             {
                 throw new NotFoundException($"No enrollments found for course ID {courseId}.");
             }

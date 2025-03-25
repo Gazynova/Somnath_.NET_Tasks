@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Project_Demo.Models;
 using Project_Demo.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace Project_Demo.Controllers
 {
@@ -23,16 +25,7 @@ namespace Project_Demo.Controllers
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> Enroll()
         {
-            var students = await _studentService.GetAllStudentsAsync();
-            var courses = await _courseService.GetAllCoursesAsync();
-
-            var model = new EnrollmentViewModel
-            {
-                Students = students.ToList(),  // Convert to List<Student> safely
-                Courses = courses.ToList()     // Convert to List<Course> safely
-            };
-
-            return View(model);
+            return View(await PopulateEnrollmentViewModel());
         }
 
         // POST: Enroll student in a course
@@ -40,44 +33,34 @@ namespace Project_Demo.Controllers
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> Enroll(EnrollmentViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Debugging: Ensure the StudentId and CourseId are being passed correctly
-                Console.WriteLine($"StudentId: {model.StudentId}, CourseId: {model.CourseId}");
+                return View(await PopulateEnrollmentViewModel());
+            }
 
-                // Check if IDs are valid before processing
-                if (model.StudentId == 0 || model.CourseId == 0)
+            try
+            {
+                if (model.StudentId == null || model.CourseId == 0)
                 {
                     ModelState.AddModelError(string.Empty, "Invalid student or course selection.");
-                    model.Students = (List<Student>)await _studentService.GetAllStudentsAsync();
-                    model.Courses = (List<Course>)await _courseService.GetAllCoursesAsync();
-                    return View(model);
+                    return View(await PopulateEnrollmentViewModel());
                 }
 
                 await _enrollmentService.EnrollStudentAsync(model.StudentId, model.CourseId);
                 return RedirectToAction("Index", "Student");
             }
-
-            // Reload the data in case of an invalid model
-            model.Students = (List<Student>)await _studentService.GetAllStudentsAsync();
-            model.Courses = (List<Course>)await _courseService.GetAllCoursesAsync();
-            return View(model);
+            catch (Exception ex)
+            {
+                // Log error (optional)
+                return StatusCode(500, "An error occurred while enrolling the student.");
+            }
         }
 
         // GET: Withdraw view
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> Withdraw()
         {
-            var students = await _studentService.GetAllStudentsAsync();
-            var courses = await _courseService.GetAllCoursesAsync();
-
-            var model = new EnrollmentViewModel
-            {
-                Students = students.ToList(),  // Convert to List<Student> safely
-                Courses = courses.ToList()     // Convert to List<Course> safely
-            };
-
-            return View(model);
+            return View(await PopulateEnrollmentViewModel());
         }
 
         // POST: Withdraw student from a course
@@ -85,25 +68,39 @@ namespace Project_Demo.Controllers
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> Withdraw(EnrollmentViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                return View(await PopulateEnrollmentViewModel());
+            }
+
+            try
             {
                 // Check if IDs are valid before processing
-                if (model.StudentId == 0 || model.CourseId == 0)
+                if (model.StudentId == null || model.CourseId == 0)
                 {
                     ModelState.AddModelError(string.Empty, "Invalid student or course selection.");
-                    model.Students = (List<Student>)await _studentService.GetAllStudentsAsync();
-                    model.Courses = (List<Course>)await _courseService.GetAllCoursesAsync();
-                    return View(model);
+                    return View(await PopulateEnrollmentViewModel());
                 }
 
                 await _enrollmentService.WithdrawStudentAsync(model.StudentId, model.CourseId);
                 return RedirectToAction("Index", "Student");
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while withdrawing the student.");
+            }
+        }
 
-            // Reload the data in case of an invalid model
-            model.Students = (List<Student>)await _studentService.GetAllStudentsAsync();
-            model.Courses =     (List<Course>)await _courseService.GetAllCoursesAsync();
-            return View(model);
+        private async Task<EnrollmentViewModel> PopulateEnrollmentViewModel()
+        {
+            var students = await _studentService.GetAllStudentsAsync();
+            var courses = await _courseService.GetAllCoursesAsync();
+
+            return new EnrollmentViewModel
+            {
+                Students = students.ToList(),
+                Courses = courses.ToList()
+            };
         }
     }
 }
