@@ -17,6 +17,7 @@ namespace Project_Demo.Controllers
             _courseService = courseService;
         }
 
+        // GET: Index
         [Authorize(Roles = "Student, Teacher")]
         public async Task<IActionResult> Index()
         {
@@ -28,11 +29,11 @@ namespace Project_Demo.Controllers
             catch (Exception ex)
             {
                 // Log error (optional)
-                // _logger.LogError(ex, "Error retrieving courses");
                 return StatusCode(500, "An error occurred while fetching courses.");
             }
         }
 
+        // GET: Details
         [Authorize(Roles = "Student, Teacher")]
         public async Task<IActionResult> Details(int id)
         {
@@ -51,22 +52,20 @@ namespace Project_Demo.Controllers
             }
         }
 
+        // GET: Create
         [Authorize(Roles = "Teacher")]
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Create([Bind("CourseName,Description,Credits")] Course course)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(course);
-            }
-
             try
             {
                 await _courseService.AddCourseAsync(course);
@@ -78,6 +77,7 @@ namespace Project_Demo.Controllers
             }
         }
 
+        // GET: Edit
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -96,6 +96,7 @@ namespace Project_Demo.Controllers
             }
         }
 
+        // POST: Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]
@@ -106,7 +107,7 @@ namespace Project_Demo.Controllers
                 return BadRequest("Course ID mismatch.");
             }
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 return View(course);
             }
@@ -122,6 +123,7 @@ namespace Project_Demo.Controllers
             }
         }
 
+        // GET: Delete
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -140,6 +142,7 @@ namespace Project_Demo.Controllers
             }
         }
 
+        // POST: DeleteConfirmed
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Teacher")]

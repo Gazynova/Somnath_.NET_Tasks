@@ -13,12 +13,19 @@ namespace Project_Demo.Repositories
 
         public CourseRepository(ApplicationDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<IEnumerable<Course>> GetAllCoursesAsync()
         {
-            return await _context.Courses.ToListAsync();
+            try
+            {
+                return await _context.Courses.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("An error occurred while fetching all courses.", ex);
+            }
         }
 
         public async Task<Course> GetCourseByIdAsync(int id)
@@ -28,13 +35,20 @@ namespace Project_Demo.Repositories
                 throw new ValidationException("Invalid course ID provided.");
             }
 
-            var course = await _context.Courses.FindAsync(id);
-            if (course == null)
+            try
             {
-                throw new NotFoundException($"Course with ID {id} not found.");
-            }
+                var course = await _context.Courses.FindAsync(id);
+                if (course == null)
+                {
+                    throw new NotFoundException($"Course with ID {id} not found.");
+                }
 
-            return course;
+                return course;
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException($"An error occurred while fetching the course with ID {id}.", ex);
+            }
         }
 
         public async Task AddCourseAsync(Course course)
@@ -44,8 +58,15 @@ namespace Project_Demo.Repositories
                 throw new ValidationException("Course data cannot be null.");
             }
 
-            await _context.Courses.AddAsync(course);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.Courses.AddAsync(course);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("An error occurred while adding the course.", ex);
+            }
         }
 
         public async Task UpdateCourseAsync(Course course)
@@ -55,14 +76,26 @@ namespace Project_Demo.Repositories
                 throw new ValidationException("Course data cannot be null.");
             }
 
-            var existingCourse = await _context.Courses.FindAsync(course.Id);
-            if (existingCourse == null)
+            try
             {
-                throw new NotFoundException($"Course with ID {course.Id} not found.");
-            }
+                var existingCourse = await _context.Courses.FindAsync(course.Id);
+                if (existingCourse == null)
+                {
+                    throw new NotFoundException($"Course with ID {course.Id} not found.");
+                }
 
-            _context.Courses.Update(course);
-            await _context.SaveChangesAsync();
+                // Updating properties
+                existingCourse.CourseName = course.CourseName;
+                existingCourse.Description = course.Description;
+                existingCourse.Credits = course.Credits;
+
+                _context.Courses.Update(existingCourse);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException($"An error occurred while updating the course with ID {course.Id}.", ex);
+            }
         }
 
         public async Task DeleteCourseAsync(int id)
@@ -72,14 +105,21 @@ namespace Project_Demo.Repositories
                 throw new ValidationException("Invalid course ID provided.");
             }
 
-            var course = await _context.Courses.FindAsync(id);
-            if (course == null)
+            try
             {
-                throw new NotFoundException($"Course with ID {id} not found.");
-            }
+                var course = await _context.Courses.FindAsync(id);
+                if (course == null)
+                {
+                    throw new NotFoundException($"Course with ID {id} not found.");
+                }
 
-            _context.Courses.Remove(course);
-            await _context.SaveChangesAsync();
+                _context.Courses.Remove(course);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException($"An error occurred while deleting the course with ID {id}.", ex);
+            }
         }
     }
 }

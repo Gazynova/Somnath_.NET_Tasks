@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Project_Demo.Data;
 using Project_Demo.Models;
 using Project_Demo.Models.ViewModels;
 using Project_Demo.Services;
@@ -14,17 +15,17 @@ namespace Project_Demo.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IStudentService _studentService;
+        readonly ApplicationDbContext _studentManegementDbContext;
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            IStudentService studentService)
+            ApplicationDbContext studentManegementDbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
-            _studentService = studentService;
+            _studentManegementDbContext = studentManegementDbContext;
         }
 
         // GET: /Account/Login
@@ -100,7 +101,7 @@ namespace Project_Demo.Controllers
                     UserName = model.FirstName + model.LastName,
                     Email = model.Email,
                     EmailConfirmed = true,
-                    //NormalizedEmail = model.Email,
+                    NormalizedEmail = model.Email,
 
                     //FirstName = model.FirstName,
                     //LastName = model.LastName,
@@ -108,15 +109,15 @@ namespace Project_Demo.Controllers
                 };
 
 
-                //var student = new Student()
-                //{
-                //    FirstName = model.FirstName,
-                //    LastName = model.LastName,
-                //    DateOfBirth = model.DateOfBirth,
-                //    Email = model.Email,
-                //    ApplicationUserId = user.Id,
+                var student = new Student()
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    DateOfBirth = model.DateOfBirth,
+                    Email = model.Email,
+                    ApplicationUserId = user.Id,
 
-                //};
+                };
 
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -125,12 +126,14 @@ namespace Project_Demo.Controllers
                 {
                     // Assign the selected role
                     await _userManager.AddToRoleAsync(user, model.Role);
-                    //if(model.Role == "Student")
-                    //{
-                    //    await _studentService.AddStudentAsync(student);
-                    //}
+                    if (model.Role == "Student")
+                    {
+                        _studentManegementDbContext.Students.AddAsync(student);
+                        await _studentManegementDbContext.SaveChangesAsync();
+                    }
 
-                    //await _studentRepository.Create(student);
+                    
+
                     return RedirectToAction($"{model.Role}", "Dashboard");
                      
                 }

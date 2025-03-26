@@ -25,7 +25,7 @@ namespace StudentMVC.Repositories
 
         public async Task AddCourseAsync(Course course)
         {
-            await _context.Courses.AddAsync(course);
+             _context.Courses.AddAsync(course);
             await _context.SaveChangesAsync();
         }
 

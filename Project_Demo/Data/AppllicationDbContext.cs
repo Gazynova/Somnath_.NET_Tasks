@@ -29,6 +29,12 @@ namespace Project_Demo.Data
                 .WithMany(c => c.Enrollments) // Each Course has many Enrollments
                 .HasForeignKey(e => e.CourseId) // The FK is CourseId
                 .OnDelete(DeleteBehavior.Cascade); // Cascade delete enrollments if Course is deleted
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(a => a.Student)
+                .WithOne(s => s.User)
+                .HasForeignKey<Student>(s => s.ApplicationUserId);
+
         }
     }
 }
