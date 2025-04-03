@@ -36,25 +36,25 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
-    [Authorize(Roles = "Admin")]
-    [HttpPost("seed-admin")]
-    public async Task<IActionResult> SeedAdmin()
-    {
-        await _authService.SeedAdminAsync();
-        return Ok("Admin user and role seeded successfully.");
-    }
+    //[Authorize(Roles = "Admin")]
+    //[HttpPost("seed-admin")]
+    //public async Task<IActionResult> SeedAdmin()
+    //{
+    //    await _authService.SeedAdminAsync();
+    //    return Ok("Admin user and role seeded successfully.");
+    //}
 
-    [Authorize]
-    [HttpGet("me")]
-    public async Task<IActionResult> GetCurrentUser()
-    {
-        var userId = User.FindFirst("uid")?.Value;
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Unauthorized("User ID not found in token.");
-        }
+    //[Authorize]
+    //[HttpGet("me")]
+    //public async Task<IActionResult> GetCurrentUser()
+    //{
+    //    var userId = User.FindFirst("uid")?.Value;
+    //    if (string.IsNullOrEmpty(userId))
+    //    {
+    //        return Unauthorized("User ID not found in token.");
+    //    }
 
-        var userDTO = await _authService.GetCurrentUser(userId);
-        return Ok(userDTO);
-    }
+    //    var userDTO = await _authService.GetCurrentUser(userId);
+    //    return Ok(userDTO);
+    //}
 }

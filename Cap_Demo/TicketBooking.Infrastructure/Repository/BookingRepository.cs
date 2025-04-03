@@ -33,7 +33,7 @@ public class BookingRepository : IBookingRepository
     {
         return await _context.Bookings
             .Include(b => b.Event)    // Include Event relationship
-            .Include(b => b.Payment) // Include Payment relationship
+            .Include(b => b.Payment) 
             .FirstOrDefaultAsync(b => b.Id == id);
     }
 
@@ -41,7 +41,7 @@ public class BookingRepository : IBookingRepository
     {
         return await _context.Bookings
             .Include(b => b.Event)    // Include Event relationship
-            .Include(b => b.Payment) // Include Payment relationship
+            .Include(b => b.Payment) 
             .ToListAsync();
     }
 

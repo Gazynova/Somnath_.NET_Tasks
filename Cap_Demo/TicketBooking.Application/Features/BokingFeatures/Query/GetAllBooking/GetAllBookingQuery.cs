@@ -10,6 +10,6 @@ namespace TicketBooking.Application.Features.BokingFeatures.Query.GetAllBooking
 {
     
 
-    public class GetAllBookingsQuery : IRequest<IEnumerable<Booking>> { }
+    public record GetAllBookingsQuery : IRequest<IEnumerable<Booking>> { }
 
 }
