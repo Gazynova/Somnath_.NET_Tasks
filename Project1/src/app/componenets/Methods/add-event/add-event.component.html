@@ -1,0 +1,51 @@
+// add-event.component.html
+<div class="container mt-5">
+  <h2>Add Event</h2>
+  <form (ngSubmit)="submitEvent()">
+    <div class="mb-3">
+      <label for="name">Event Name:</label>
+      <input type="text" id="name" class="form-control" [(ngModel)]="event.name" name="name" required />
+    </div>
+  
+    <div class="mb-3">
+      <label for="description">Description:</label>
+      <textarea id="description" class="form-control" [(ngModel)]="event.description" name="description"></textarea>
+    </div>
+  
+    <div class="mb-3">
+      <label for="date">Date:</label>
+      <input type="date" id="date" class="form-control" [(ngModel)]="event.date" name="date" required />
+    </div>
+  
+    <div class="mb-3">
+      <label for="venue">Venue:</label>
+      <input type="text" id="venue" class="form-control" [(ngModel)]="event.venue" name="venue" required />
+    </div>
+  
+    <div class="mb-3">
+      <label for="seats">Available Seats:</label>
+      <input type="number" id="seats" class="form-control" [(ngModel)]="event.availableSeats" name="seats" required />
+    </div>
+  
+    <div class="mb-3">
+      <label for="price">Price:</label>
+      <input type="number" id="price" class="form-control" [(ngModel)]="event.price" name="price" required />
+    </div>
+  
+    <div class="mb-3">
+        <label for="eventCategory">Event Category:</label>
+        <select id="eventCategory" [(ngModel)]="event.eventCategoryId" class="form-control">
+          <option value="" disabled selected>Select Category</option>
+          <option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+        <!-- <p *ngIf="!event.eventCategoryId">No category selected</p> -->
+        
+    </div>
+  
+    <button type="submit" class="btn btn-primary">Add Event</button>
+    <button type="button" class="btn btn-secondary" (click)="cancelCreate()">Cancel</button>
+  </form>
+  
+</div>

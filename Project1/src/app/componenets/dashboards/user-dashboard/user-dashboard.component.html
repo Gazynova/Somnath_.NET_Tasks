@@ -1,0 +1,43 @@
+<div class="container mt-5">
+    <h2>Welcome, User</h2>
+    <p>Email</p>
+</div>
+
+<div class="container mt-5">
+    <h2>Available Events</h2>
+    <div class="row">
+        <div *ngFor="let event of events" class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ event.name }}</h5>
+                    <p class="card-text">{{ event.description }}</p>
+                    <p><strong>Venue:</strong> {{ event.venue }}</p>
+                    <p><strong>Date:</strong> {{ event.date }}</p>
+                    <p><strong>Price:</strong> {{ event.price }}</p>
+                    <button class="btn btn-primary" (click)="bookEvent(event)">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toggle Button -->
+    <button (click)="getUserBookings()" class="btn btn-info mt-3">
+        {{ showBookings ? 'Hide My Bookings' : 'View My Bookings' }}
+    </button>
+
+    <!-- Bookings Section (Toggled) -->
+    <div *ngIf="showBookings">
+        <h2 class="mt-4">My Bookings</h2>
+        <div *ngFor="let booking of userBookings" class="mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ booking.event.name }}</h5>
+                    <p><strong>Seat:</strong> {{ booking.seatNumber }}</p>
+                    <p><strong>Status:</strong> {{ booking.status }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button (click)="logout()" class="btn btn-danger mt-3">Logout</button>
+</div>

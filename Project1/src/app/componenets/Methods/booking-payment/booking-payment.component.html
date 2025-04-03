@@ -1,0 +1,17 @@
+// booking-payment.component.html
+<div class="container mt-5">
+  <h2>Complete Payment</h2>
+  <p><strong>Event:</strong> {{ event.name }}</p>
+  <p><strong>Venue:</strong> {{ event.venue }}</p>
+  <p><strong>Date:</strong> {{ event.date }}</p>
+  <p><strong>Price:</strong> {{ event.price }}</p>
+
+  <form (ngSubmit)="processPayment()">
+    <div class="mb-3">
+      <label for="upiId">UPI ID:</label>
+      <input id="upiId" type="text" class="form-control" [(ngModel)]="payment.paymentMethod" name="upiId" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Pay</button>
+    <button type="button" class="btn btn-secondary" (click)="cancelPayment()">Cancel</button>
+  </form>
+</div>

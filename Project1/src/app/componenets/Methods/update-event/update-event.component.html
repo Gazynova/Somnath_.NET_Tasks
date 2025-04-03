@@ -1,0 +1,42 @@
+<div class="container mt-5">
+    <h2>Update Event</h2>
+    <form (ngSubmit)="updateEvent()">
+      <div class="mb-3">
+        <label for="name">Event Name:</label>
+        <input id="name" type="text" class="form-control" [(ngModel)]="event.name" name="name" required>
+      </div>
+  
+      <div class="mb-3">
+        <label for="description">Description:</label>
+        <textarea id="description" class="form-control" [(ngModel)]="event.description" name="description" required></textarea>
+      </div>
+  
+      <div class="mb-3">
+        <label for="date">Date:</label>
+        <input id="date" type="date" class="form-control" [(ngModel)]="event.date" name="date" required>
+      </div>
+  
+      <div class="mb-3">
+        <label for="venue">Venue:</label>
+        <input id="venue" type="text" class="form-control" [(ngModel)]="event.venue" name="venue" required>
+      </div>
+  
+      <div class="mb-3">
+        <label for="price">Price:</label>
+        <input id="price" type="number" class="form-control" [(ngModel)]="event.price" name="price" required>
+      </div>
+  
+      <div class="mb-3">
+        <label for="eventCategory">Event Category:</label>
+        <select id="eventCategory" class="form-control" [(ngModel)]="event.eventCategoryId" name="eventCategory">
+          <option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+  
+      <button type="submit" class="btn btn-warning">Update Event</button>
+      <button type="button" class="btn btn-secondary" (click)="cancelUpdate()">Cancel</button>
+    </form>
+  </div>
+  

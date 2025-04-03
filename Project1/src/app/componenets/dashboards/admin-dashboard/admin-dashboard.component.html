@@ -1,0 +1,44 @@
+// admin-dashboard.component.html
+<div class="container mt-5">
+  <h2>Welcome, Admin {{ adminInfo.name }}</h2>
+  <p>Email: {{ adminInfo.email }}</p>
+  <button class="btn btn-danger mt-3" (click)="logout()">Logout</button>
+
+  <h3 class="mt-4">Event Management</h3>
+  <button class="btn btn-success" (click)="addEvent()">Add Event</button>
+  <button class="btn btn-primary" (click)="loadEvents()">Refresh Events</button>
+  
+  <div class="row mt-4">
+    <div class="col-md-4" *ngFor="let event of events">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ event.name }}</h5>
+          <p class="card-text">{{ event.description }}</p>
+          <p class="card-text">Date: {{ event.date }}</p>
+          <p class="card-text">Venue: {{ event.venue }}</p>
+          <p class="card-text">Seats: {{ event.availableSeats }}</p>
+          <p class="card-text">Price: {{ event.price }}</p>
+          <p class="card-text">Category: {{ event.eventCategoryId }}</p>
+          <!-- <p class="card-text">Category: {{ event.eventCategory?.name }}</p> -->
+
+          <button class="btn btn-warning" (click)="updateEvent(event)">Update</button>
+          <button class="btn btn-danger" (click)="deleteEvent(event.id)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h2>All Bookings</h2>
+<button (click)="fetchAllBookings()" class="btn btn-primary">Get All Bookings</button>
+<div class="row mt-3">
+  <div *ngFor="let booking of allBookings" class="col-md-4 mb-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{ booking.event.name }}</h5>
+        <p><strong>User:</strong> {{ booking.userId }}</p>
+        <p><strong>Seat Number:</strong> {{ booking.seatNumber }}</p>
+        <p><strong>Status:</strong> {{ booking.status }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
