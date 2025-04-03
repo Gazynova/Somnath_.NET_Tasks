@@ -12,18 +12,50 @@ using TicketBooking.Infrastructure.Context;
 namespace TicketBooking.Infrastructure.Migrations
 {
     [DbContext(typeof(TicketBookingContext))]
-    [Migration("20250328075922_Initial_Migration")]
-    partial class Initial_Migration
+    [Migration("20250401133437_Payment isssue solved")]
+    partial class Paymentisssuesolved
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.3")
+                .HasAnnotation("ProductVersion", "8.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("TicketBooking.Demo.Booking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("BookingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Bookings");
+                });
 
             modelBuilder.Entity("TicketBooking.Demo.Event", b =>
                 {
@@ -61,7 +93,7 @@ namespace TicketBooking.Infrastructure.Migrations
 
                     b.HasIndex("EventCategoryId");
 
-                    b.ToTable("events");
+                    b.ToTable("Events");
 
                     b.HasData(
                         new
@@ -133,15 +165,76 @@ namespace TicketBooking.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("TicketBooking.Demo.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId")
+                        .IsUnique();
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("TicketBooking.Demo.Booking", b =>
+                {
+                    b.HasOne("TicketBooking.Demo.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("TicketBooking.Demo.Event", b =>
                 {
-                    b.HasOne("TicketBooking.Demo.EventCategory", "eventType")
+                    b.HasOne("TicketBooking.Demo.EventCategory", "EventCategory")
                         .WithMany()
                         .HasForeignKey("EventCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("eventType");
+                    b.Navigation("EventCategory");
+                });
+
+            modelBuilder.Entity("TicketBooking.Demo.Payment", b =>
+                {
+                    b.HasOne("TicketBooking.Demo.Booking", "Booking")
+                        .WithOne("Payment")
+                        .HasForeignKey("TicketBooking.Demo.Payment", "BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+                });
+
+            modelBuilder.Entity("TicketBooking.Demo.Booking", b =>
+                {
+                    b.Navigation("Payment")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

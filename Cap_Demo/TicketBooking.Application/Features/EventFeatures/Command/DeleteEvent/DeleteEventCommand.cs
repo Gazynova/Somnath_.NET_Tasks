@@ -8,7 +8,13 @@ using TicketBooking.Demo;
 
 namespace TicketBooking.Application.Features.EventFeatures.Command.DeleteEvent
 {
-    public record DeleteEventCommand (int id): IRequest<bool>
+    public class DeleteEventCommand : IRequest<bool>
     {
+        public int Id { get; set; }
+
+        public DeleteEventCommand(int id)
+        {
+            Id = id;
+        }
     }
 }

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicketBooking.Application.DTOs
+namespace TicketBooking.Application.Models.Identity
 {
-    class UserDto
+    public class RegistrationResponse
     {
+        public string UserId { get; set; }
     }
 }

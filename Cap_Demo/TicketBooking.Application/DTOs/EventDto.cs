@@ -17,9 +17,9 @@ namespace TicketBooking.Application.DTOs
         public decimal Price { get; set; }
 
         // Include EventCategory information
-        //public int EventCategoryId { get; set; }
-        public string CategoryName { get; set; } // Optional, for displaying the category name
-        public string EventCategoryName { get; internal set; }
+        public int EventCategoryId { get; set; }
+        //public string CategoryName { get; set; } // Optional, for displaying the category name
+        //public string EventCategoryName { get; internal set; }
     }
 }
 

@@ -10,7 +10,6 @@ namespace TicketBooking.Application.Features.EventFeatures.Query.GetAllEvents
 {
     public class GetAllEventsQuery : IRequest<IEnumerable<Event>>
     {
-        public GetAllEventsQuery() { }
     }
     
 }

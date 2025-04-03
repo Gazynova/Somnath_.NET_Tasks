@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace TicketBooking.Application.DTOs
 {
-    public class LoginDto
+    public class ResponseDto
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public bool Success { get; set; }
+        public List<string>? Errors { get; set; }
     }
 }
-

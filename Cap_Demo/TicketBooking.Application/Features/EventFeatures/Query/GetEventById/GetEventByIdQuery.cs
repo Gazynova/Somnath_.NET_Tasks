@@ -8,7 +8,13 @@ using TicketBooking.Demo;
 
 namespace TicketBooking.Application.Features.EventFeatures.Query.GetEventById
 {
-    public record GetEventByIdQuery(int id):IRequest<Event>
+    public class GetEventByIdQuery : IRequest<Event>
     {
+        public int Id { get; set; }
+
+        public GetEventByIdQuery(int id)
+        {
+            Id = id;
+        }
     }
 }

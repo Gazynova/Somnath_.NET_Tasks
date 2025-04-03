@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+using TicketBooking.Application.DTOs;
+using TicketBooking.Demo;
 
-namespace TicketBooking.Application.Features.EventFeatures.Command.UpdateEvent
+public class UpdateEventCommand : IRequest<Event>
 {
-    public record UpdateEventCommand
+    public int Id { get; set; }
+    public EventDto EventDto { get; set; }
+
+    public UpdateEventCommand(int id, EventDto eventDto)
     {
+        Id = id;
+        EventDto = eventDto;
     }
 }

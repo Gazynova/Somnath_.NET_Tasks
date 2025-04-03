@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TicketBooking.Demo;
 using TicketBooking.Infrastructure.Configuration;
 
@@ -15,19 +10,17 @@ namespace TicketBooking.Infrastructure.Context
         {
         }
 
-        public DbSet<Event> events { get; set; }
+        public DbSet<Event> Events { get; set; }
         public DbSet<EventCategory> EventCategories { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // Called once at the start
 
             modelBuilder.ApplyConfiguration(new EventConfiguration());
-            base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new EventCategoyConfiguration());
-            base.OnModelCreating(modelBuilder);
-
-
-
         }
-
     }
 }

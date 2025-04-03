@@ -1,27 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
-using TicketBooking.Application.Interface;
+﻿using MediatR;
 using TicketBooking.Demo;
+using TicketBooking.Application.Interface;
+using TicketBooking.Application.Features.EventFeatures.Query.GetEventById;
 
-namespace TicketBooking.Application.Features.EventFeatures.Query.GetEventById
+public class GetEventByIdQueryHandler : IRequestHandler<GetEventByIdQuery, Event>
 {
-    public class GetEventbyIdQueryHandler : IRequestHandler<GetEventByIdQuery, Event>
+    private readonly IEventRepository _eventRepository;
+
+    public GetEventByIdQueryHandler(IEventRepository eventRepository)
     {
-        IEventRepository _eventRepository;
-        public GetEventbyIdQueryHandler(IEventRepository eventRepository)
-        {
-            _eventRepository = eventRepository;
-        }
+        _eventRepository = eventRepository;
+    }
 
-        public async Task<Event> Handle(GetEventByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Event> Handle(GetEventByIdQuery request, CancellationToken cancellationToken)
+    {
+        var eventDetails = await _eventRepository.GetEventById(request.Id);
+        if (eventDetails == null)
         {
-            var result = await _eventRepository.GetEventById(request.id);
-            return result;
-
+            throw new KeyNotFoundException($"Event with ID {request.Id} not found.");
         }
+        return eventDetails;
     }
 }
