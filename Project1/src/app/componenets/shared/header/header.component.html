@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+  <a class="navbar-brand" routerLink="/">🎟️ TicketBooking</a>
+  <div class="ms-auto">
+    <ng-container *ngIf="!showLogout">
+      <button class="btn btn-outline-light me-2" (click)="openLoginModal()">Login</button>
+      <button class="btn btn-outline-light" (click)="openRegisterModal()">Register</button>
+    </ng-container>
+    <button *ngIf="showLogout" class="btn btn-outline-light" (click)="logout()">Logout</button>
+  </div>
+</nav>
+
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- <app-login></app-login>  -->
+        <app-login (switchToRegister)="openRegisterFromLogin()"></app-login>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registerModalLabel">Register</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- <app-register></app-register> -->
+        <app-register (switchToLogin)="openLoginFromRegister()"></app-register>
+
+      </div>
+    </div>
+  </div>
+</div>
+

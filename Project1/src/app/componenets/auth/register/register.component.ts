@@ -1,5 +1,5 @@
-// register.component.ts
-import { Component } from '@angular/core';
+
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +20,8 @@ export class RegisterComponent {
   confirmPassword: string = '';
 
   constructor(private router: Router, private authService: AuthService) {}
+@Output() switchToLogin = new EventEmitter<void>();
+
 
   register() {
     if (this.password === this.confirmPassword) {
@@ -47,7 +49,13 @@ export class RegisterComponent {
   }
   
 
+  // navigateToLogin() {
+  //   this.router.navigate(['/login']);
+  // }
+
   navigateToLogin() {
-    this.router.navigate(['/login']);
+    this.switchToLogin.emit();
   }
+
+  
 }

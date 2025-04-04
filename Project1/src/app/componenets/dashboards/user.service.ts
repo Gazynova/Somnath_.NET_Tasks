@@ -22,6 +22,7 @@ private eventUrl = 'https://localhost:7176/api';
     return this.http.get<Event[]>(`${this.eventUrl}/Events`);
   }
  
+  
 
   getUserBookings(): Observable<Booking[]> {
     return this.http.get<Booking[]>(`${this.apiUrl}`);

@@ -1,0 +1,21 @@
+<div class="booking-container" *ngIf="eventData">
+    <h2>Book Event: {{ eventData.name }}</h2>
+    <p><strong>Venue:</strong> {{ eventData.venue }}</p>
+    <p><strong>Date:</strong> {{ eventData.date }}</p>
+    <p><strong>Price per ticket:</strong> ₹{{ eventData.price }}</p>
+  
+    <form (ngSubmit)="bookEvent()">
+      <div class="form-group">
+        <label for="name">Your Name:</label>
+        <input id="name" class="form-control" [(ngModel)]="userName" name="name" required />
+      </div>
+  
+      <div class="form-group">
+        <label for="tickets">Number of Tickets:</label>
+        <input type="number" id="tickets" class="form-control" [(ngModel)]="tickets" name="tickets" min="1" required />
+      </div>
+  
+      <button class="glass-button" type="submit">Confirm Booking</button>
+    </form>
+  </div>
+  

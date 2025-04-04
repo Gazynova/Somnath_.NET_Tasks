@@ -91,20 +91,30 @@ form input[type='submit'] {
   transition: 0.5s;
 }
 
-.signup {
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
   margin-top: 20px;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: #555;
-  text-transform: uppercase;
-  font-weight: 300;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: rgba(255, 0, 0, 0.4); /* soft red background */
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(255, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.signup a {
-  font-weight: 600;
-  text-decoration: none;
-  color: #677eff;
+button[type="submit"]:hover {
+  background: rgba(255, 0, 0, 0.7);
+  box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
+  transform: translateY(-2px);
 }
+
+
+
 
 @media (max-width: 991px) {
   .container {
@@ -118,4 +128,6 @@ form input[type='submit'] {
   .formBx {
     width: 100%;
   }
+
+  
 }

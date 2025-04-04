@@ -10,22 +10,30 @@ import { AdminDashboardComponent } from './componenets/dashboards/admin-dashboar
 import { AddEventComponent } from './componenets/Methods/add-event/add-event.component';
 import {UpdateEventComponent} from './componenets/Methods/update-event/update-event.component';
 import{BookingPaymentComponent} from './componenets/Methods/booking-payment/booking-payment.component';
+import { HomeComponent } from './componenets/home/home.component';
+import { BookingComponent } from './componenets/Methods/booking/booking.component';
+import { AuthGuard } from './componenets/guard/auth.guard';
 
 
-const routes: Routes = [
+export const routes: Routes = [
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent},
   { path: 'register', component: RegisterComponent },
-  {path :'userdashboard',component:UserDashboardComponent},
-  {path:'admindashboard', component:AdminDashboardComponent},
+  {path :'userdashboard',component:UserDashboardComponent, canActivate:[AuthGuard]},
+  {path:'admindashboard', component:AdminDashboardComponent,canActivate:[AuthGuard]},
   {path:'add-event',component:AddEventComponent},
   { path: 'update-event/:id', component: UpdateEventComponent },
   {path:'booking-payment',component:BookingPaymentComponent},
-
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  // {path:'booking-event',component:BookingComponent},
+  { path: 'book/:id', component: BookingComponent },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   
 
 ];
-export default routes;
+
+
+
+// export default routes;
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

@@ -8,6 +8,7 @@ export interface Event {
     price: number;
     eventCategoryId: number;
     eventCategory: any;
+
   }
   
   export interface EventCategory {

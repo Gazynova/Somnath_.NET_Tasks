@@ -1,0 +1,41 @@
+<app-header 
+  [showLogout]="false"
+></app-header>
+<!-- (onShowLogin)="showLogin()" -->
+  <!-- (onShowRegister)="showRegister()" -->
+<div class="home-container">
+  <div class="content">
+    <main class="main-content">
+      <div class="header">
+        <h1>Welcome to the <span>Ticket Booking System</span></h1>
+        <p>Login or Register to book events.</p>
+      </div>
+
+      <!-- Login/Register Forms -->
+      <!-- <div *ngIf="showLoginForm || showRegisterForm" class="auth-form-wrapper">
+        <button class="btn-close float-end" (click)="closeForms()"></button>
+        <app-login *ngIf="showLoginForm"></app-login>
+        <app-register *ngIf="showRegisterForm"></app-register>
+      </div> -->
+
+      <!-- Events Section -->
+      <h2 class="events-heading">Available Events</h2>
+      <div class="event-list">
+        <div *ngFor="let event of events" class="event-card">
+          <img [src]="event.imageUrl || 'https://cdn.pixabay.com/photo/2016/11/23/15/48/audience-1853662_640.jpg'" alt="Event Image" />
+          <div class="event-content">
+            <h3>{{ event.name }}</h3>
+            <p>{{ event.description }}</p>
+            <p><strong>Venue:</strong> {{ event.venue }}</p>
+            <p><strong>Date:</strong> {{ event.date | date:'mediumDate' }}</p>
+            <p><strong>Price:</strong> ₹{{ event.price }}</p>
+            <div class="text-center">
+            <button class="glass-button mt-3 mb-3 text-center" >Book Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </main>
+  </div>
+</div>
